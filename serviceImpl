@@ -1,0 +1,26 @@
+# Notes
+
+ppiServiceImpl
+
+tokenValue = CacheServer.get(tokenKey)
+
+if(tokenValue==null or empty){
+	call tokenSever for token(endpoint,secretKey,appId)
+	CacheServer.set(tokenKey)
+}
+
+PPIres= call ppiAPI at athena(using token);
+if(res/statusCode=200){
+	
+}elseif(res is forbidden){
+	call tokenSever for token(endpoint,secretKey,appId)
+	CacheServer.set(tokenKey)
+}
+
+private function to call PPIAPI(apiinquiryRequest){
+set headers
+set enquity request
+
+request to backend
+return response
+}
