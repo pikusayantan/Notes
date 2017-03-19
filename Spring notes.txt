@@ -1,0 +1,222 @@
+<bean id="triangle" class="com.india.sayantan.model.Triangle">
+		<!-- for calling setter method and set value -->
+		<!-- <property name="type1" value="Hello World!"/> -->
+
+		<!-- //for calling constructor -->
+		<constructor-arg value="10" />
+		<constructor-arg value="triangle" type="String" index="0" />
+	</bean>
+----------------------------------------------
+how to initiate spring bean:
+ApplicationContext factory = new ClassPathXmlApplicationContext("spring.xml");
+Area area=(Area) factory.getBean("area");//using cast explicitly
+Area area= factory.getBean("area",Area.class); //spring will cast object to class we pass as second parameter
+
+----------------------------------------------
+in spring config.xml 
+<bean id="triangle" class="com.india.sayantan.model.Triangle" autowire="byName">
+</bean>
+
+autowire="byName" will check bean name of same as variable name in that class.
+
+autowire="byType" will match with type of varable with the type of bean available
+it will work if only one instance. More than one same type of bean will not work, as spring will not know which bean to call
+
+autowire="constructor"
+will search bean of same type as constructors parameter type, and use each of them to intialize constructor.
+but there should be more than one bean of same type.else it will not work.
+
+-------------------------
+Scope:
+by default all beans are singleton
+prototype is for new object evertime getbean is called or every request or reference
+
+<bean id="triangle" class="com.india.sayantan.model.Triangle" scope="prototype">
+</bean>
+
+------------------------
+Inherit bean property: using parent to inherit some default value, values can be override
+eg: parent beans having few values set, other values can be set in child bean or can be overrride value which is assigned in parent.
+<bean id="parentBean" class="org.something">
+<property name="type1" value="value1"/>
+</bean>
+<bean id="bean" class="org.something" parent="parentBean">
+<property name="type2" value="value2"/>  //it will inherit type1 from parent
+</bean>
+
+to merge list while inheriting:
+<bean id=..... , parent="parentBean">
+<property>
+<list merge="true">
+<ref bean="points"/>
+</list>
+</property>
+</bean>
+
+to make parent not to initialize but just use as template
+<bean id="parentBean" class="org.something" abstract="true">
+------------------------------------
+ApplicationContextAware:
+if we Implements this will have setApplicationContext(ApplicationContext context) function which can be uses to
+make changes in applicationContext object.
+
+BeanNameAware:
+if we Implements this will have setBeanName(String beanName)
+This will give the name of the bean.
+------------------------------------
+implements InitializingBean,DisposableBean
+use for initilizing some code before bean creation and after destroying bean
+
+AbstractApplicationContext factory = new ClassPathXmlApplicationContext("spring.xml");
+factory.registerShutdownHook();//else destroy func will not be called
+
+another way is to mention in spring xml using (it is better to use as we are not binding spring in code)
+<bean id="myBean" class="org.something" init-method="initFunc" destroy-method="destroyFunc">
+--------------------------------------------
+BeanPostProcessor and BeanFactoryPostProcessor
+BeanPostProcessor: have implmting function to execute code before and after bean creation and return the object
+BeanFactoryPostProcessor have implements to execute code before even beanfactory is been created.
+------------------------------------------
+How to read property file
+
+<bean id=..... class=...>
+<property name="x" value="${PointA.X}"/>
+<property name="x" value="${PointA.Y}"/>
+</bean>
+
+we need to tell where it property file resides
+<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+<property name="location" value="pointconfig.properties"/>
+</bean>
+
+pointconfig.properties looks like:
+PointA.X=0
+PointA.Y=1
+-----------------------------------------
+
+Read properties file using messageSource
+<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource>
+	<property name="basenames">
+		<list>
+			<value>pointconfig</value>//proper file to read
+		</list>
+	</property>
+</bean>
+
+two ways we can read:
+1. above bean has implemets by applicationContext
+ApplicationContext factory = new ClassPathXmlApplicationContext("spring.xml");
+factory.getMessage("PointA.X", null, "default message", null) //key, array of value to place in message, default value if not present, locale
+
+2. using MessageSource implementation
+
+@Autowired
+MessageSource messageSource;
+//getter and setters
+messageSource.getMessage("PointA.X", null, "default message", null)
+messageSource.getMessage("Points", new Object[] {point.getX, point.getY}, "default message", null) //will replace placeholder with value
+
+pointconfig.properties looks like:
+PointA.X=0
+Points=points are : ({0},{1})
+
+-----------------------------------------
+@Named and @Component does the same thing. it creates bean for the same class
+we need to add below line to spring xml as well which will scan and create beans
+<context:component-scan base-package="com.india.sayantan" />
+-----------------------------------------
+@Required
+it is used above setter method of a class. It ensures that variable is initize during bean creation.
+if setter method is not found during bean creation, it will throw BeanCreationException.
+annotation cannot be used above variable declaration
+@Required
+	public void setPoint(Points point) {
+		this.point = point;
+	}
+	
+-----------------------------------------
+@Autowired
+autowire on setter will search bean with same type of variable type, then it will go for name of parameter name.
+if more then one parameter of same type is present then it will throw error. or we have to map by variable name.
+
+@Qualifier("beanName")
+will search bean with same 
+
+@Autowired
+@Qualifier("length")
+public void setPoint(Points point) {
+	this.point = point;
+}
+	
+------------------------------------------
+@Resource
+works almost like @Autowire. By default it will search by type and if more bean of same type, then it will match by name of the variable.
+@Resource(name="length2")
+it will search bean with "length2" assign value to the 
+------------------------------------------
+@PostConstruct
+Annotation on method make that method call post creation of bean
+@PreDestroy
+Annotation on method make that method call before destroy of bean
+------------------------------------------
+@Component
+annotation above class will create bean for the class with beanid same as class name.
+
+@Component
+public class Area {}
+
+equivalent to:
+<bean id="area" class="com.india.sayantan.util.Area"/>
+
+@Component("beanName")
+will create bean with beanId = beanName.
+-------------------------------------------
+@Service
+@Repository 
+@Controller are all same as @Component
+it gives additional information to spring and helps in creating documentation what the bean doing
+-------------------------------------------
+EvenHandling:
+Create Listner:
+
+public class MyEventListner implements ApplicationListner{
+	public void onApplicationEvent(ApplicationEvent event){
+		system.out.println(event.toString());
+	}
+}
+
+
+Create Event:
+public class EventDraw extends ApplicationEvent{
+	public EventDraw(Object source){
+		super(source);
+	}
+	public String toString(){
+		return "Draw event occured";
+	}
+}
+
+Event Emmiter or publisher:
+
+public class DrawEventPublisher implements ApplicationEventPublisherAware{
+	private ApplicationEventPublisher publisher;
+	
+	@Override //this will set spring publisher to the class, and will be set by spring automatically
+	public void setApplicationEventPublisher(ApplicationEventPublisher publisher){
+		this.publisher=publisher;
+	}
+	
+	public void publishEvent(){
+		EventDraw eventDraw=new EventDraw(this);
+		publisher.publishEvent(eventDraw);
+	}
+}
+
+---------------------------------------------------------
+AOP - Aspect Oriented Programming
+jars to download:
+The links for the dependencies are:
+AspectJ: http://www.eclipse.org/aspectj/downloads.php
+AOP Alliance: http://aopalliance.sourceforge.net/
+CGILIB: http://cglib.sourceforge.net/
+Spring 3 ASM: http://asm.ow2.org/

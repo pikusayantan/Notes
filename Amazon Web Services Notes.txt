@@ -1,0 +1,66 @@
+Geographical area is region amazon is present
+Availability zones simple data center in that Geographical area. The reside close to each other but separated by some distance.
+Each Geographical are contains 2 or more Availability Zones
+Edge location is where data are cached that are used frequently.
+
+EC2: Elastic Compute Cloud
+EBS: Elastic Block Storage
+S3: Simple Storage Service
+EFS: Elastic File Service
+SMS: Server Migration Service
+DMS: Database Migration Service
+EMR: 
+IAM: Identity Access Management
+WAF: Web Application Firewall
+SWF: Simple workflow Service
+SQS: Simple Queue S
+SNS: Simple Notification Service
+SES: Simple Email Service
+
+IAM:
+C
+
+EC2:
+Ondemand: reserve instance for hourly basis
+Spot: reserve instance by bidding.. if instance price increases from bid price then instance will be removed
+Reserved: it will reserve instance for 1yr to 3yrs..Pay like upfront fee.Longer years less price
+how to get EC2 instance metadata: curl http://169.254.169.254/latest/meta-data/
+
+EBS:
+it is stoage for EC2 instances. Types:
+1. General Purpose SSD: upto (10000Ipos)
+2. Provisioned IOPS SSD(more than 10000 iops)
+3. Magnetic: Cheap
+Notes:
+Cant mount one ebs volume to multiple EC2 instnace. 
+If need to use in multiple EC2 instances then use EFS instead.
+
+Elastic Load Balancing:
+two types:
+1. EC2-VPC [port 1-65535]
+2. Classic [port 25,80,443465,587,1024-65535]
+It support protocols are: Http,Https,TCP,SSL(secure TCP)
+
+S3:
+one file size can be of 0bytes to 5TB
+S3 has unique namespace, ie, bucket name should be unique globally
+It is object based storage. Consist of-
+1. Key-Name of the object
+2. Value-is data in form of sequence of bytes
+3. VersionID: for file versioning
+4. Metadata: data abt data like date created etc.
+5. Subresources: a) Access Control List b)Torrents
+
+S3-Storage tier-
+a)S3 
+b)S3-IA(Infrequently Accessed)low fee than s3 but retieval charge apply
+c) Reduced Redundancy Storage: low durability of 99.99%
+
+Configure LifeCycle in S3
+1. Action on Current Version
+2. Action on Previous Version
+
+transition in Glacier, then in glacier file should stay for 90days, as it charges for 90days, deletion before also will incur charges for 90 days
+transition to infrequent access require minimum of 128kb and 30days after creation date.
+
+Cloud Front 

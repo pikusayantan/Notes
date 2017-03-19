@@ -1,0 +1,354 @@
+app\src\main\java\com
+
+* To edit text
+(TextView)findViewById(R.id.textView)).setText("text changed");
+-------------------------------------------------------------------------------------------------------------------------
+* To add new line in activity.xml file use this special symbol: &#10  html symbol
+-------------------------------------------------------------------------------------------------------------------------
+* To make image it invisible/transparent set alpha in activity: set 0(for invisible) to 1(visible)
+-------------------------------------------------------------------------------------------------------------------------
+* text size= dp (density independent pixel)
+		   = sp if we want size to change accoording to size set in android device settings.
+-------------------------------------------------------------------------------------------------------------------------
+* Change visibility on runtime with animation:
+imageView.animate().alpha(0f).setDuration(2000);
+-------------------------------------------------------------------------------------------------------------------------
+* add images during runtime 
+imageview.setImageResource(R.drawable.image);
+-------------------------------------------------------------------------------------------------------------------------
+* move image from current position to X Y location with animation:
+imageView.animate()
+                .translationXBy(1000f)
+                .translationYBy(1000f)
+                .rotationBy(3600)
+                .setDuration(2000);
+-
+/**/  
+* Change other layout using id(make visible)
+
+LinearLayout layout = (LinearLayout)findViewById(R.id.playAgainLayout);
+layout.setVisibility(View.VISIBLE);
+-------------------------------------------------------------------------------------------------------------------------
+* Set Video in videoView
+videoView.setVideoPath("android.resource://"+getPackageName()+"/"+R.raw.demoVideo)
+videoView.start();
+-------------------------------------------------------------------------------------------------------------------------
+* Video with controls
+MediaController mediaController = new MediaController(this);
+mediaController.setAnchorView(videoView);//set video to controller
+videoView.setMediaController(mediaController);//set controller to the view
+videoView.start();
+-------------------------------------------------------------------------------------------------------------------------
+* To start a audio file:
+MediaPlayer mplayer = MediaPlayer.create(this, R.raw.laugh);
+mplayer.start();//use buttons to play pause
+mplayer.pause();//to pause
+-------------------------------------------------------------------------------------------------------------------------
+* How to add seek bar for audio volume
+mplayer = MediaPlayer.create(this, R.raw.laugh);
+
+audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);//gets audio details from system
+int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+int curVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+
+SeekBar volumeControl = (SeekBar)findViewById(R.id.seekBar);
+volumeControl.setMax(maxVolume);
+volumeControl.setProgress(curVolume);
+
+volumeControl.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+     @Override
+     public void onStartTrackingTouch(SeekBar seekBar) {
+        }
+     @Override
+     public void onStopTrackingTouch(SeekBar seekBar) {
+        }
+     @Override
+     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0);//set seek value to audiomanager
+        }
+     });
+-------------------------------------------------------------------------------------------------------------------------
+* How to add seek bar for audio progress
+final SeekBar scrubber = (SeekBar) findViewById(R.id.scrubber);
+scrubber.setMax(mplayer.getDuration());
+new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                scrubber.setProgress(mplayer.getCurrentPosition());
+            }
+        }, 0, 100);
+scrubber.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mplayer.seekTo(progress);
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+		
+-------------------------------------------------------------------------------------------------------------------------
+* How to retrieve ID name and get view ID value which is an integer
+public void buttonTapped(View view) {
+
+        int id = view.getId(); //will fetch integer value of the view
+        String ourId = "";
+        ourId = view.getResources().getResourceEntryName(id);//will fetch string id which we gave in design
+        int resourceId = getResources().getIdentifier(ourId, "raw", "com.example.robpercival.basicphrases");
+        MediaPlayer mplayer = MediaPlayer.create(this, resourceId);
+        mplayer.start();
+
+        Log.i("button tapped", ourId);
+
+    }
+-------------------------------------------------------------------------------------------------------------------------
+* How to ListView using AdapterArray
+ListView friendsListView = (ListView)findViewById(R.id.friendsListView);
+final ArrayList<String> myFriends = new ArrayList<String>(asList("John", "Paul", "George", "Ringo"));
+ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, myFriends);
+friendsListView.setAdapter(arrayAdapter);
+friendsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+@Override
+public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+	Toast.makeText(getApplicationContext(), "Hello " + myFriends.get(position), Toast.LENGTH_LONG).show();
+    }
+});
+
+--how to notify if arrayList is changed..:
+arrayAdapter.notifyDataSetChanged();
+-------------------------------------------------------------------------------------------------------------------------
+* How to use timer for schedule task
+new CountDownTimer(10000, 1000) {
+	public void onTick(long millisecondsUntilDone) {
+		// Coundown is counting down (every second)
+		Log.i("Seconds left", String.valueOf(millisecondsUntilDone / 1000));
+	}
+
+	public void onFinish() {
+		// Counter is finished! (after 10 seconds)
+		Log.i("Done!", "Coundown Timer Finished");
+	}
+}.start();
+
+//Another way to run code in interval
+final Handler handler = new Handler();
+Runnable run = new Runnable() {
+	@Override
+	public void run() {
+		// Insert code to be run every second
+		Log.i("Runnable has run!", "a second must have passed...");
+		handler.postDelayed(this, 1000);
+	}
+};
+handler.post(run);
+
+-------------------------------------------------------------------------------------------------------------------------
+How to run code on different thread
+
+public class DownloadTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... urls) {
+           //do something
+        }
+    }
+
+//to run the thread from other part of code or main thread...
+DownloadTask task = new DownloadTask();
+task.execute("https://www.ecowebhosting.co.uk/").get();
+
+-------------------------------------------------------------------------------------------------------------------------
+To Hide Keyboard:
+
+InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+mgr.hideSoftInputFromWindow(cityName.getWindowToken(), 0);
+
+-------------------------------------------------------------------------------------------------------------------------
+permission:
+for location:
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+-------------------------------------------------------------------------------------------------------------------------
+
+private GoogleMap mMap;
+
+@Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);//set map type
+
+        // Add a marker in everest and move the camera
+        LatLng everest = new LatLng(27.9878547, 86.922832); 
+
+        mMap.addMarker(new MarkerOptions().position(everest).title("Mount Everest")
+		.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))); //set marker icon
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(everest, 10)); //set zoom level 1-20
+    }
+-------------------------------------------------------------------------------------------------------------------------
+how to get user location:
+1. create LocationListener
+2. get LocationManager reference
+
+// Acquire a reference to the system Location Manager
+LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+
+//Creation of LocationListener
+LocationListener locationListener = new LocationListener() {
+    public void onLocationChanged(Location location) {
+      // Called when a new location is found by the network location provider.
+      makeUseOfNewLocation(location);
+    }
+
+    public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+    public void onProviderEnabled(String provider) {}
+
+    public void onProviderDisabled(String provider) {}
+  };
+  
+ // Register the listener with the Location Manager to receive location updates
+ // 0 ,0 in parameter are one for time interval it will look for location, another for distance  
+locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);//to get location details from network operator
+locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);//to get location details from gps, more accuracy
+
+-------------------------------------------------------------------------------------------------------------------------
+To check for any Permission granted or not and also ask for it:(api above ver 23)
+
+if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+	// ask for permission
+	//last param(here we gave 1) is request code/id, it is required to distinguish between different permission request 
+	ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+}
+
+//this function handles the user reponse for 
+@Override
+public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+	super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+	if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+
+			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+
+	}
+
+}
+
+
+-------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------
+How to use Shared Preferences:
+//Initiate
+SharedPreferences sharedPreferences = this.getSharedPreferences("com.robpercival.sharedpreferences", Context.MODE_PRIVATE);
+//save in shared preference
+sharedPreferences.edit().putString("friends", ObjectSerializer.serialize(friends)).apply();
+//retrieve from shared preference
+sharedPreferences.getString("friends", ObjectSerializer.serialize(new ArrayList<String>()));
+-------------------------------------------------------------------------------------------------------------------------
+Add Menu to app
+1. add layout
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Settings"
+        android:id="@+id/settings"></item>
+
+    <item android:title="Help"
+        android:id="@+id/help"></item>
+
+</menu>
+
+2. add code in mainActivuty:
+//add menu to the app
+@Override
+public boolean onCreateOptionsMenu(Menu menu) {
+
+	MenuInflater menuInflater = getMenuInflater();
+	menuInflater.inflate(R.menu.main_menu, menu);
+	return super.onCreateOptionsMenu(menu);
+}
+//invoke function when one of the menu option is clicked
+@Override
+public boolean onOptionsItemSelected(MenuItem item) {
+	super.onOptionsItemSelected(item);
+
+	switch (item.getItemId()) {
+		case R.id.settings:
+			Log.i("Menu item selected", "Settings");
+			return true;
+		case R.id.help:
+			Log.i("Menu item selected", "Help");
+			return true;
+		default:
+			return false;
+
+	}
+}
+
+-------------------------------------------------------------------------------------------------------------------------
+
+Dialog alert:
+
+new AlertDialog.Builder(MainActivity.this)
+		.setIcon(android.R.drawable.ic_dialog_alert)
+		.setTitle("Are you sure?")
+		.setMessage("Do you want to delete this note?")
+		.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialogInterface, int i) {
+
+						Log.i("inside yes","yes");
+
+					}
+				}
+		)
+		.setNegativeButton("No", null)
+		.show();
+-------------------------------------------------------------------------------------------------------------------------
+* Open new intend:
+
+Intent intent = new Intent(getApplicationContext(), NoteEditorActivity.class);
+//Intent intent = new Intent(com.sayanyan.NoteEditorActivity); //will also work
+intent.putExtra("noteId", i);//send parameters to intend we are calling
+startActivity(intent);
+
+how to receive value passed from parent in opened intend:
+
+Intent intent = getIntent();
+noteId = intent.getIntExtra("noteId", -1);// second param is default value
+-------------------------------------------------------------------------------------------------------------------------
+How to access 
+String SD_CARD_PATH = Environment.getExternalStorageDirectory().toString();
+new File(SD_CARD_PATH + "/" + "splah2.jpg");
+-------------------------------------------------------------------------------------------------------------------------
+How to use SQL Db in android: 
+
+SQLiteDatabase eventsDB = this.openOrCreateDatabase("Events", MODE_PRIVATE, null);
+//Create table
+eventsDB.execSQL("CREATE TABLE IF NOT EXISTS events (event VARCHAR, year INT(4))");
+//insert values
+eventsDB.execSQL("INSERT INTO events (event, year) VALUES ('End Of WW2', 1945)");
+eventsDB.execSQL("INSERT INTO events (event, year) VALUES ('Wham split up', 1986)");
+//Retrieve values
+Cursor c = eventsDB.rawQuery("SELECT * FROM events", null);
+//fetch column index
+int eventIndex = c.getColumnIndex("event");
+int yearIndex = c.getColumnIndex("year");
+
+c.moveToFirst();
+
+while (c != null) {
+	Log.i("Results - event", c.getString(eventIndex));
+	Log.i("Results - year", Integer.toString(c.getInt(yearIndex)));
+	c.moveToNext();
+}
+-------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------
