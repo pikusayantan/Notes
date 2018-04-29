@@ -7,6 +7,9 @@ app\src\main\java\com
 -------------------------------------------------------------------------------------------------------------------------
 * To make image it invisible/transparent set alpha in activity: set 0(for invisible) to 1(visible)
 -------------------------------------------------------------------------------------------------------------------------
+To hide actionbar:
+getSupportedActionBar().hide();
+-------------------------------------------------------------------------------------------------------------------------
 * text size= dp (density independent pixel)
 		   = sp if we want size to change accoording to size set in android device settings.
 -------------------------------------------------------------------------------------------------------------------------
