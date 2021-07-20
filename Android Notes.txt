@@ -19,6 +19,9 @@ imageView.animate().alpha(0f).setDuration(2000);
 * add images during runtime 
 imageview.setImageResource(R.drawable.image);
 -------------------------------------------------------------------------------------------------------------------------
+* to show message in toast
+Toast.makeText(getApplicationContext(), "Hello " , Toast.LENGTH_LONG).show();
+-------------------------------------------------------------------------------------------------------------------------
 * move image from current position to X Y location with animation:
 imageView.animate()
                 .translationXBy(1000f)
@@ -113,6 +116,8 @@ ListView friendsListView = (ListView)findViewById(R.id.friendsListView);
 final ArrayList<String> myFriends = new ArrayList<String>(asList("John", "Paul", "George", "Ringo"));
 ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, myFriends);
 friendsListView.setAdapter(arrayAdapter);
+
+//to listen to clicked item on the list
 friendsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 @Override
 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -163,6 +168,14 @@ DownloadTask task = new DownloadTask();
 task.execute("https://www.ecowebhosting.co.uk/").get();
 
 -------------------------------------------------------------------------------------------------------------------------
+To run when background thread is done processing
+@Override
+protected void onPostExecute(String result) {
+    super.onPostExecute(result);
+	//your code
+}
+
+-------------------------------------------------------------------------------------------------------------------------
 To Hide Keyboard:
 
 InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -200,7 +213,7 @@ how to get user location:
 LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
 
-//Creation of LocationListener
+//Creation of LocationListener when location change
 LocationListener locationListener = new LocationListener() {
     public void onLocationChanged(Location location) {
       // Called when a new location is found by the network location provider.
@@ -243,7 +256,6 @@ public void onRequestPermissionsResult(int requestCode, @NonNull String[] permis
 
 }
 
-
 -------------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------------------------
 How to use Shared Preferences:
@@ -267,7 +279,7 @@ Add Menu to app
 
 </menu>
 
-2. add code in mainActivuty:
+2. add code in mainActivity:
 //add menu to the app
 @Override
 public boolean onCreateOptionsMenu(Menu menu) {
@@ -295,7 +307,6 @@ public boolean onOptionsItemSelected(MenuItem item) {
 }
 
 -------------------------------------------------------------------------------------------------------------------------
-
 Dialog alert:
 
 new AlertDialog.Builder(MainActivity.this)
@@ -314,7 +325,7 @@ new AlertDialog.Builder(MainActivity.this)
 		.setNegativeButton("No", null)
 		.show();
 -------------------------------------------------------------------------------------------------------------------------
-* Open new intend:
+* Open new intend or new activity from different activity:
 
 Intent intent = new Intent(getApplicationContext(), NoteEditorActivity.class);
 //Intent intent = new Intent(com.sayanyan.NoteEditorActivity); //will also work

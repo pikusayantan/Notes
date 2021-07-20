@@ -18,7 +18,10 @@ SNS: Simple Notification Service
 SES: Simple Email Service
 
 IAM:
-C
+User: End user
+Group: collection of users 	under one set of permission
+Roles: Create role and then can be assign to AWS resources
+Policies: Document that define one or more permission.
 
 EC2:
 Ondemand: reserve instance for hourly basis
